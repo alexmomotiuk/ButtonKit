@@ -34,9 +34,9 @@ struct CircularProgressView: View {
     var body: some View {
         // Use ProgressView to set the view size
         ProgressView()
-            #if os(macOS)
+//            #if os(macOS)
             .controlSize(.small)
-            #endif
+//            #endif
             .opacity(0)
             .overlay {
                 Rectangle()
