@@ -208,12 +208,14 @@ extension AsyncButton where S == Text {
         action: @MainActor @escaping (P) async throws -> Void,
         onStateChange: (@MainActor (AsyncButtonState) -> Void)? = nil
     ) {
-        self.role = role
-        self.id = id
-        self._progress = .init(initialValue: progress)
-        self.action = action
-        self.label = Text(titleKey)
-        self.onStateChange = onStateChange
+        self.init(
+            role: role,
+            id: id,
+            progress: progress,
+            action: action,
+            label: Text(titleKey),
+            onStateChange: onStateChange
+        )
     }
     
     @_disfavoredOverload
@@ -265,16 +267,18 @@ extension AsyncButton where S == Label<Text, Image> {
         action: @MainActor @escaping (P) async throws -> Void,
         onStateChange: (@MainActor (AsyncButtonState) -> Void)? = nil
     ) {
-        self.role = role
-        self.id = id
-        self._progress = .init(initialValue: progress)
-        self.action = action
-        self.label = Label(title: {
-            Text(titleKey)
-        }, icon: {
-            Image(name)
-        })
-        self.onStateChange = onStateChange
+        self.init(
+            role: role,
+            id: id,
+            progress: progress,
+            action: action,
+            label: Label(title: {
+                Text(titleKey)
+            }, icon: {
+                Image(name)
+            }),
+            onStateChange: onStateChange
+        )
     }
     
     @_disfavoredOverload
@@ -327,16 +331,18 @@ extension AsyncButton where S == Label<Text, Image> {
         action: @MainActor @escaping (P) async throws -> Void,
         onStateChange: (@MainActor (AsyncButtonState) -> Void)? = nil
     ) {
-        self.role = role
-        self.id = id
-        self._progress = .init(initialValue: progress)
-        self.action = action
-        self.label = Label(title: {
-            Text(titleKey)
-        }, icon: {
-            Image(image)
-        })
-        self.onStateChange = onStateChange
+        self.init(
+            role: role,
+            id: id,
+            progress: progress,
+            action: action,
+            label: Label(title: {
+                Text(titleKey)
+            }, icon: {
+                Image(image)
+            }),
+            onStateChange: onStateChange
+        )
     }
 
     @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
@@ -390,16 +396,18 @@ extension AsyncButton where S == Label<Text, Image> {
         action: @MainActor @escaping (P) async throws -> Void,
         onStateChange: (@MainActor (AsyncButtonState) -> Void)? = nil
     ) {
-        self.role = role
-        self.id = id
-        self._progress = .init(initialValue: progress)
-        self.action = action
-        self.label = Label(title: {
-            Text(titleKey)
-        }, icon: {
-            Image(systemName: systemImage)
-        })
-        self.onStateChange = onStateChange
+        self.init(
+            role: role,
+            id: id,
+            progress: progress,
+            action: action,
+            label: Label(title: {
+                Text(titleKey)
+            }, icon: {
+                Image(systemName: systemImage)
+            }),
+            onStateChange: onStateChange
+        )
     }
     
     @_disfavoredOverload
@@ -470,12 +478,14 @@ extension AsyncButton where P == IndeterminateProgress, S == Text {
         action: @escaping () async throws -> Void,
         onStateChange: (@MainActor (AsyncButtonState) -> Void)? = nil
     ) {
-        self.role = role
-        self.id = id
-        self._progress = .init(initialValue: .indeterminate)
-        self.action = { _ in try await action()}
-        self.label = Text(titleKey)
-        self.onStateChange = onStateChange
+        self.init(
+            role: role,
+            id: id,
+            progress: .indeterminate,
+            action: { _ in try await action() },
+            label: Text(titleKey),
+            onStateChange: onStateChange
+        )
     }
     
     @_disfavoredOverload
@@ -524,16 +534,17 @@ extension AsyncButton where P == IndeterminateProgress, S == Label<Text, Image> 
         action: @escaping () async throws -> Void,
         onStateChange: (@MainActor (AsyncButtonState) -> Void)? = nil
     ) {
-        self.role = role
-        self.id = id
-        self._progress = .init(initialValue: .indeterminate)
-        self.action = { _ in try await action()}
-        self.label = Label(title: {
-            Text(titleKey)
-        }, icon: {
-            Image(name)
-        })
-        self.onStateChange = onStateChange
+        self.init(
+            role: role,
+            id: id,progress: .indeterminate,
+            action: { _ in try await action() },
+            label: Label(title: {
+                Text(titleKey)
+            }, icon: {
+                Image(name)
+            }),
+            onStateChange: onStateChange
+        )
     }
     
     @_disfavoredOverload
@@ -583,16 +594,17 @@ extension AsyncButton where P == IndeterminateProgress, S == Label<Text, Image> 
         action: @escaping () async throws -> Void,
         onStateChange: (@MainActor (AsyncButtonState) -> Void)? = nil
     ) {
-        self.role = role
-        self.id = id
-        self._progress = .init(initialValue: .indeterminate)
-        self.action = { _ in try await action()}
-        self.label = Label(title: {
-            Text(titleKey)
-        }, icon: {
-            Image(image)
-        })
-        self.onStateChange = onStateChange
+        self.init(
+            role: role,
+            id: id,progress: .indeterminate,
+            action: { _ in try await action() },
+            label: Label(title: {
+                Text(titleKey)
+            }, icon: {
+                Image(image)
+            }),
+            onStateChange: onStateChange
+        )
     }
 
     @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
@@ -643,16 +655,17 @@ extension AsyncButton where P == IndeterminateProgress, S == Label<Text, Image> 
         action: @escaping () async throws -> Void,
         onStateChange: (@MainActor (AsyncButtonState) -> Void)? = nil
     ) {
-        self.role = role
-        self.id = id
-        self._progress = .init(initialValue: .indeterminate)
-        self.action = { _ in try await action()}
-        self.label = Label(title: {
-            Text(titleKey)
-        }, icon: {
-            Image(systemName: systemImage)
-        })
-        self.onStateChange = onStateChange
+        self.init(
+            role: role,
+            id: id,progress: .indeterminate,
+            action: { _ in try await action() },
+            label: Label(title: {
+                Text(titleKey)
+            }, icon: {
+                Image(systemName: systemImage)
+            }),
+            onStateChange: onStateChange
+        )
     }
     
     @_disfavoredOverload
