@@ -36,9 +36,11 @@ struct IndeterminateProgressView: View {
                     .fill(.primary)
                     .mask { progress }
             }
-//            #if os(macOS)
+            #if os(macOS)
             .controlSize(.small)
-//            #endif
+            #else
+            .controlSize(.regular)
+            #endif
             .compositingGroup()
     }
 
