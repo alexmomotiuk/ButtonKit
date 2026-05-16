@@ -4,7 +4,7 @@
 //
 //  MIT License
 //
-//  Copyright (c) 2025 Thomas Durand
+//  Copyright (c) 2026 Thomas Durand
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ struct AsyncButtonDemo: View {
                 }
                 .asyncButtonStyle(.pulse)
 
-                if #available(iOS 18.0, *) {
+                if #available(iOS 18.0, macOS 14.0, *) {
                     AsyncButton {
                         try await Task.sleep(nanoseconds: 2_000_000_000)
                     } label: {

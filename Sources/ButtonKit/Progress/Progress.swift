@@ -4,7 +4,7 @@
 //
 //  MIT License
 //
-//  Copyright (c) 2025 Thomas Durand
+//  Copyright (c) 2026 Thomas Durand
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,9 @@ public protocol TaskProgress: Sendable, ObservableObject {
 
     /// Should reset the progres to it's initial value
     @MainActor func reset()
+    /// Called when the owning task is cancelled, allowing the progress implementation
+    /// to forward that cancellation to any underlying system API.
+    @MainActor func cancel()
 
     @MainActor
     func started() async
@@ -42,6 +45,7 @@ public protocol TaskProgress: Sendable, ObservableObject {
 }
 
 extension TaskProgress {
+    public func cancel() {}
     public func started() async {}
     public func ended() async {}
 }

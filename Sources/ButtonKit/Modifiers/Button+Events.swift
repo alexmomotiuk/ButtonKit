@@ -4,7 +4,7 @@
 //
 //  MIT License
 //
-//  Copyright (c) 2025 Thomas Durand
+//  Copyright (c) 2026 Thomas Durand
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -31,17 +31,43 @@ import SwiftUI
 
 public typealias ButtonStateChangedHandler = @MainActor @Sendable (StateChangedEvent) -> Void
 public typealias ButtonStateErrorHandler = @MainActor @Sendable (ErrorOccurredEvent) -> Void
+public typealias ButtonStateCancelledHandler = @MainActor @Sendable (AnyHashable) -> Void
 
+#if swift(>=6.2)
+@MainActor
+public struct StateChangedEvent: @MainActor Equatable {
+    public let buttonID: AnyHashable
+    public let state: AsyncButtonState
+    let time: Date = .now
+}
+#else
 public struct StateChangedEvent: Equatable, Sendable {
     nonisolated(unsafe) public let buttonID: AnyHashable
     public let state: AsyncButtonState
     let time: Date = .now
 }
+#endif
 
 public struct ErrorOccurredEvent {
     public let buttonID: AnyHashable
     public let error: Error
     let time: Date = .now
+}
+
+extension StateChangedEvent {
+    var errorOccurredEvent: ErrorOccurredEvent? {
+        guard case let .ended(.errored(error, _)) = state else {
+            return nil
+        }
+        return .init(buttonID: buttonID, error: error)
+    }
+
+    var cancelledButtonID: AnyHashable? {
+        guard case .ended(.cancelled) = state else {
+            return nil
+        }
+        return buttonID
+    }
 }
 
 extension View {
@@ -52,10 +78,19 @@ extension View {
             }
         })
     }
+
     public func onButtonStateError(_ handler: @escaping ButtonStateErrorHandler) -> some View {
         modifier(OnButtonLatestStateChangeModifier { event in
-            if case let .ended(.errored(error, _)) = event?.state {
-                handler(.init(buttonID: event!.buttonID, error: error))
+            if let errorEvent = event?.errorOccurredEvent {
+                handler(errorEvent)
+            }
+        })
+    }
+
+    public func onButtonStateCancelled(_ handler: @escaping ButtonStateCancelledHandler) -> some View {
+        modifier(OnButtonLatestStateChangeModifier { event in
+            if let buttonID = event?.cancelledButtonID {
+                handler(buttonID)
             }
         })
     }
@@ -114,6 +149,21 @@ extension View {
 
 typealias OptionalButtonStateChangedHandler = @MainActor @Sendable (StateChangedEvent?) -> Void
 
+#if swift(>=6.2)
+@MainActor
+struct ButtonLatestStatePreferenceKey: @MainActor PreferenceKey {
+    static let defaultValue: StateChangedEvent? = nil
+
+    static func reduce(value: inout StateChangedEvent?, nextValue: () -> StateChangedEvent?) {
+        guard let next = nextValue() else {
+            return
+        }
+        if value == nil || next.time > value!.time {
+            value = next
+        }
+    }
+}
+#else
 struct ButtonLatestStatePreferenceKey: PreferenceKey {
     static let defaultValue: StateChangedEvent? = nil
 
@@ -126,6 +176,7 @@ struct ButtonLatestStatePreferenceKey: PreferenceKey {
         }
     }
 }
+#endif
 
 struct OnButtonLatestStateChangeModifier: ViewModifier {
     let handler: OptionalButtonStateChangedHandler
@@ -137,7 +188,7 @@ struct OnButtonLatestStateChangeModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .onPreferenceChange(ButtonLatestStatePreferenceKey.self) { state in
-                MainActor.assumeIsolated {
+                Task { @MainActor in
                     handler(state)
                 }
             }

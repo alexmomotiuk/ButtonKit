@@ -4,7 +4,7 @@
 //
 //  MIT License
 //
-//  Copyright (c) 2025 Thomas Durand
+//  Copyright (c) 2026 Thomas Durand
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -39,14 +39,10 @@ public final class NSProgressBridge: TaskProgress {
 
             if let nsProgress {
                 observations.insert(nsProgress.observe(\.fractionCompleted, options: [.initial, .new], changeHandler: { [weak self] progress, _ in
-                    DispatchQueue.main.async { [weak self] in
-                        self?.update(with: progress)
-                    }
+                    self?.scheduleUpdate(with: progress)
                 }))
                 observations.insert(nsProgress.observe(\.isIndeterminate, options: [.initial, .new], changeHandler: { [weak self] progress, _ in
-                    DispatchQueue.main.async { [weak self] in
-                        self?.update(with: progress)
-                    }
+                    self?.scheduleUpdate(with: progress)
                 }))
             }
         }
@@ -55,8 +51,26 @@ public final class NSProgressBridge: TaskProgress {
 
     nonisolated init() {}
 
+    private nonisolated func scheduleUpdate(with progress: Progress) {
+        Task { @MainActor [weak self] in
+            self?.updateIfCurrent(with: progress)
+        }
+    }
+
+    private func updateIfCurrent(with progress: Progress) {
+        guard nsProgress === progress else {
+            return
+        }
+
+        update(with: progress)
+    }
+
     private func update(with progress: Progress) {
         fractionCompleted = progress.isIndeterminate ? nil : progress.fractionCompleted
+    }
+
+    public func cancel() {
+        nsProgress?.cancel()
     }
 
     public func reset() {

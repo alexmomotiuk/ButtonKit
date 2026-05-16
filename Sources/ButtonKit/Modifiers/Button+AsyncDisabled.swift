@@ -4,7 +4,7 @@
 //
 //  MIT License
 //
-//  Copyright (c) 2025 Thomas Durand
+//  Copyright (c) 2026 Thomas Durand
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -43,30 +43,8 @@ extension View {
 
 // MARK: SwiftUI Environment
 
-struct AllowsHitTestingWhenLoadingKey: EnvironmentKey {
-    static let defaultValue: Bool = false
-}
-
-struct DisabledWhenLoadingKey: EnvironmentKey {
-    static let defaultValue: Bool = false
-}
-
 extension EnvironmentValues {
-    var allowsHitTestingWhenLoading: Bool {
-        get {
-            return self[AllowsHitTestingWhenLoadingKey.self]
-        }
-        set {
-            self[AllowsHitTestingWhenLoadingKey.self] = newValue
-        }
-    }
+    @Entry var allowsHitTestingWhenLoading: Bool = false
 
-    var disabledWhenLoading: Bool {
-        get {
-            return self[DisabledWhenLoadingKey.self]
-        }
-        set {
-            self[DisabledWhenLoadingKey.self] = newValue
-        }
-    }
+    @Entry var disabledWhenLoading: Bool = false
 }

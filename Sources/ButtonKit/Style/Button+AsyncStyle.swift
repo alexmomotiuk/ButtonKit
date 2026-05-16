@@ -4,7 +4,7 @@
 //
 //  MIT License
 //
-//  Copyright (c) 2025 Thomas Durand
+//  Copyright (c) 2026 Thomas Durand
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -85,19 +85,8 @@ extension AsyncButtonStyle where Self == OverlayAsyncButtonStyle {
     }
 }
 
-struct AsyncButtonStyleKey: EnvironmentKey {
-    static let defaultValue: AnyAsyncButtonStyle = AnyAsyncButtonStyle(.auto)
-}
-
 extension EnvironmentValues {
-    var asyncButtonStyle: AnyAsyncButtonStyle {
-        get {
-            return self[AsyncButtonStyleKey.self]
-        }
-        set {
-            self[AsyncButtonStyleKey.self] = newValue
-        }
-    }
+    @Entry var asyncButtonStyle: AnyAsyncButtonStyle = .init(.auto)
 }
 
 // MARK: - Type erasure
